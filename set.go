@@ -10,12 +10,17 @@ type set[T comparable] struct {
 	lock  sync.RWMutex
 }
 
-func New[T comparable]() *set[T] {
-	return &set[T]{
+func New[T comparable](items ...T) *set[T] {
+	s := &set[T]{
 		items: map[T]bool{},
 		count: 0,
 		lock:  sync.RWMutex{},
 	}
+
+	for _, item := range items {
+		s.Add(item)
+	}
+	return s
 }
 
 func NewFromSlice[T comparable](slice []T) *set[T] {
