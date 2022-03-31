@@ -4,14 +4,14 @@ import (
 	"sync"
 )
 
-type set[T comparable] struct {
+type Set[T comparable] struct {
 	items map[T]bool
 	count uint
 	lock  sync.RWMutex
 }
 
-func New[T comparable](items ...T) *set[T] {
-	s := &set[T]{
+func New[T comparable](items ...T) *Set[T] {
+	s := &Set[T]{
 		items: map[T]bool{},
 		count: 0,
 		lock:  sync.RWMutex{},
@@ -23,7 +23,7 @@ func New[T comparable](items ...T) *set[T] {
 	return s
 }
 
-func NewFromSlice[T comparable](slice []T) *set[T] {
+func NewFromSlice[T comparable](slice []T) *Set[T] {
 	s := New[T]()
 	for _, item := range slice {
 		s.Add(item)
@@ -31,20 +31,20 @@ func NewFromSlice[T comparable](slice []T) *set[T] {
 	return s
 }
 
-func (s *set[T]) Len() uint {
+func (s *Set[T]) Len() uint {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 	return s.count
 }
 
-func (s *set[T]) Clear() {
+func (s *Set[T]) Clear() {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	s.items = map[T]bool{}
 	s.count = 0
 }
 
-func (s *set[T]) Add(item T) {
+func (s *Set[T]) Add(item T) {
 
 	if s.Has(item) {
 		return
@@ -56,14 +56,14 @@ func (s *set[T]) Add(item T) {
 	s.count++
 }
 
-func (s *set[T]) Has(item T) bool {
+func (s *Set[T]) Has(item T) bool {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 	_, exists := s.items[item]
 	return exists
 }
 
-func (s *set[T]) Remove(item T) {
+func (s *Set[T]) Remove(item T) {
 
 	if !s.Has(item) {
 		return
@@ -75,7 +75,7 @@ func (s *set[T]) Remove(item T) {
 	s.count--
 }
 
-func (s *set[T]) Items() []T {
+func (s *Set[T]) Items() []T {
 	s.lock.RLock()
 	defer s.lock.RUnlock()
 	items := make([]T, s.Len())
